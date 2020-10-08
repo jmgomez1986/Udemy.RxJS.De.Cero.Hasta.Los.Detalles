@@ -1,43 +1,33 @@
 
-import { Observable, Observer } from 'rxjs';
+import { Observable, Observer, Subject } from 'rxjs';
 
 const observer: Observer<any> = {
 	next: value => console.log('next: ', value),
-	error: 	error => console.warn('Errorobs: ', error),
+	error: error => console.warn('Errorobs: ', error),
 	complete: () => console.log('Completado')
 };
 
-const intervalo$ = new Observable<number>( subscriber => {
-	// Crear contador
-	let count = 0;
-
-	const interval = setInterval( () => {
-		count ++;
-		subscriber.next(count);
-		console.log(count);
+const intervalo$ = new Observable<number>(subscriber => {
+	const interval = setInterval(() => {
+		subscriber.next(Math.random());
 	}, 1000);
-
-	setTimeout(() => {
-		subscriber.complete();
-	}, 2500);
 
 	return () => {
 		clearInterval(interval);
-		console.log('Intervalo destruido');
 	}
 });
 
-const subscription1 = intervalo$.subscribe( observer );
-const subscription2 = intervalo$.subscribe( observer );
-const subscription3 = intervalo$.subscribe( observer );
+/** SUBJECT
+ * 1. Casteo multiple
+ * 2.Tambien es un observer
+ * 3. Next, error y complete
+ */
 
-subscription1
-	.add(subscription2)
-	.add(subscription3);
+ const subject$ = new Subject<any>();
+ intervalo$.subscribe(subject$);
 
-setTimeout(() => {
-	subscription1.unsubscribe();
-	// subscription2.unsubscribe();
-	// subscription3.unsubscribe();
-	console.log('Completado timeout')
-}, 6000);
+// const subscription1 = intervalo$.subscribe(rnd => console.log('sub1: ', rnd));
+// const subscription2 = intervalo$.subscribe(rnd => console.log('sub2: ', rnd));
+
+const subscription1 = subject$.subscribe(rnd => console.log('sub1: ', rnd));
+const subscription2 = subject$.subscribe(rnd => console.log('sub2: ', rnd));
