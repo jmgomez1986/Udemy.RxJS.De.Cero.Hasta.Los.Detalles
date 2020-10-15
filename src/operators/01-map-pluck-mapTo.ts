@@ -1,5 +1,5 @@
 import { range, fromEvent } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, mapTo, pluck } from 'rxjs/operators';
 
 // range(1, 5)
 // 	.pipe(
@@ -21,4 +21,20 @@ const keyCode$ = keyup$.pipe(
 	map(value => value.code)
 )
 
-keyCode$.subscribe(value => console.log('map: ', value))
+const keyPluck$ = keyup$.pipe(
+	pluck('key')
+);
+
+const keyPluck2$ = keyup$.pipe(
+	pluck('target', 'baseURI')
+);
+
+const keyMapTo$ = keyup$.pipe(
+	mapTo<KeyboardEvent, string>('Tecla presionada')
+);
+
+keyup$.subscribe(console.log);
+keyCode$.subscribe(value => console.log('map: ', value));
+keyPluck$.subscribe(value => console.log('pluck: ', value));
+keyPluck2$.subscribe(value => console.log('pluck2: ', value));
+keyMapTo$.subscribe(value => console.log('mapTo: ', value));
