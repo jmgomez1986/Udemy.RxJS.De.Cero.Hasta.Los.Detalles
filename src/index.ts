@@ -1,16 +1,18 @@
-import { fromEvent } from 'rxjs';
-import { map, takeWhile } from 'rxjs/operators';
+import { interval, fromEvent } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
-const click$ = fromEvent<MouseEvent>( document, 'click' );
+const boton = document.createElement('button');
+boton.innerHTML = 'Detener Timer';
 
-click$.pipe(
-    map( ({ x, y }) => ({x,y}) ),
-    // takeWhile( ({ y })=> y <= 150 )
-		
-		// El ultimo paramentro es para incluir la emision que no cumplio la condicion
-    takeWhile( ({ y })=> y <= 150, true )
-)
-.subscribe({
-    next: val => console.log('next:', val),
-    complete: () => console.log('complete'),
+document.querySelector('body').append(boton);
+
+
+const counter$ = interval(1000);
+const clickBtn$ = fromEvent(boton, 'click');
+
+counter$.pipe(
+	takeUntil(clickBtn$)
+).subscribe({
+	next: val => console.log('next', val),
+	complete: () => console.log('complete')
 });
