@@ -1,10 +1,13 @@
-import { fromEvent } from 'rxjs';
-import { auditTime, tap, map } from 'rxjs/operators';
+const url = 'https://api.github.com/usersx?per_page=5';
 
-const click$ = fromEvent<MouseEvent>(document, 'click');
+const fetchPromesa = fetch(url);
 
-click$.pipe(
-    map(({ x }) => x),
-    tap(val => console.log('tap', val)),
-    auditTime(5000)
-).subscribe(console.log);
+fetchPromesa
+    .then(resp => resp.json())
+    .then(data => console.log('data:', data))
+    .catch(err => console.warn('error en usuarios', err))
+
+fetchPromesa
+    .then(resp => resp.json())
+    .then(data => console.log('data:', data))
+    .catch(err => console.warn('error en usuarios', err))
